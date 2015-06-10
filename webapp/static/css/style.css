@@ -1,0 +1,61 @@
+.axis path, .axis line {
+    fill: none;
+    stroke: #aaa;
+    shape-rendering: crispEdges;
+}
+
+svg {
+    font-family: 'Lato', Arial, serif;
+    font-size: 10px;
+    font-weight: 700;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+}
+rect {opacity: .5;}
+.pass {fill: green;}
+.rush {fill: blue;}
+.kick {fill: gray;}
+.punt {fill: purple;}
+.sack {fill: red;}
+.penalty {fill: aquamarine;}
+.field_goal {fill: yellow;}
+.interception {fill: orange;}
+.touchdown {fill: gold;}
+
+.FUMBLE {
+  fill:red;
+}
+.timeout {fill: brown;}
+.highlight {fill: lavender; opacity: .5; background-color: lavender; font-size:14px;}
+#tablecontain {
+    font-size: 8px;
+    padding-left:50;
+}
+
+#playdetail {
+    font-family: 'Lato', Arial, serif;
+    font-size: 14px;
+    font-weight: 600;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+    text-align: left;
+    margin-top:40px;
+}
+}
+.legend {
+padding-right: 2px;
+border-style:dashed;
+border-right:thick double #ff0000;
+}
+
+td {
+    color:black;
+}
+
+#driveinfo{
+    font-family: 'Lato', Arial, serif;
+    font-size: 16px;
+    font-weight: 500;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.8);
+    text-align: left;
+    margin-top:50px;
+    border-left: 1px dashed;
+}
