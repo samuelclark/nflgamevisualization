@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--{% assets "js_all" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script> 
+{% endassets %} -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/d3.v3.min.js') }}"></script>
+<script type=text/javascript src="{{url_for('static', filename='js/drive.js') }}"></script>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+</head>
+<body>
+   <div class="row">
+    <form id="nflinput" role="form" class="form-inline col-md-7">
+         <label for="year">year</label>
+         <input type="text" class="form-control" id="inputYear" placeholder="Enter year", value="2013", name="year">
+         <label for="week">week</label>
+         <input type="text" class="form-control" id="inputWeek" placeholder="Enter week", value="1", name="week">
+         <label for="game">game</label>
+         <input type="text" class="form-control" id="inputGame" placeholder="Enter Game", value="1", name="game">
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+    <div id="drive_select" class='col-md-5'></div>
+  </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div id="playfield" class='col-md-10'> </div>
+            <div id="driveinfo" class='col-md-2'> </div>
+             <div id="tablecontain" class="table-responsive">
+                <table id="split" class="table table-condensed table-bordered">
+                    <thead></thead>
+                     <tbody></tbody>
+                </table>
+            <div id="playdetail" class='col-md-12'> </div>
+             </div>
+        </div>
+    </div>
+</body>
+
+<script type=text/javascript>
+   var game_info  = {};
+   var height = 350;
+    var width = 960;
+    var margin ={"top": 50, "bottom": 50, "left":60, "right": 20};
+    var field_config = {
+                "height": height,
+                "width": width,
+                "margin": margin,
+                "container": "#playfield"
+                };
+    var play_config = {
+                "height": height,
+                "width": width,
+                "margin": margin,
+                "container": "#tablecontain"
+                };
+      play_config.svg = get_svg(play_config);
+      field_config.svg  = get_svg(field_config);
+
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+  $(function() {
+    $('#nflinput').bind('submit', function() {
+      $.getJSON( $SCRIPT_ROOT +'get_drives_data', {
+        year: $('input[name="year"]').val(),
+        week: $('input[name="week"]').val(),
+        game: $('input[name="game"]').val()
+      }, function(data) {
+          var select_config = {'container': '#drive_select', 'data': data}
+          show_game_drives(select_config)
+      });
+      return false;
+    });
+  });
+
+var show_game_drives = function(config) {
+    // add all the drives for the selected game to the drop down menu
+    var drives = config.data.drive_info;
+    game_info = config.data.game_info;
+    var container = config.container;
+    d3.select(container).selectAll("*").remove();
+    var dropDown = d3.select(container).append("select")
+                    .attr("name", "options-list")
+                    .attr("class", "multiple form-control")
+                    .on("change",option_change)
+                    .selectAll("option")
+                    .data(drives)
+                    .enter().append("option")
+                    .attr("value", function (d) {return d;})
+                    .text(function (d) {return d;})
+                    .style("width", "20%")
+    // remove drive detail string when switch to new game
+    // still have to remove all the other shit but i should just create a clear function rather than manually coding it everywhere
+     var detail_container = d3.select("#driveinfo");
+    detail_container[0][0].innerHTML = "";
+
+
+};
+function option_change () {
+        // when a drive is selected from drop down,
+        //  gets data via ajax call
+        // clears svg
+        // renders drive
+        var selectedIndex = this.selectedIndex;
+         $.getJSON( $SCRIPT_ROOT +'get_json_data', {
+        year: game_info.year,
+        week: game_info.week,
+        game: game_info.game,
+        drive: selectedIndex,
+      }, function(data) {
+        // clear svg
+        play_config.svg.selectAll("g").selectAll("*").remove()
+        play_config.data = data;
+        field_config.data = data;
+        render_drive(play_config,field_config);
+        });
+
+};
+</script>
+</html>
